@@ -1,0 +1,56 @@
+{
+	"contracts": {
+		"ExampleNFT": "cadence\\contracts\\ExampleNFT.cdc",
+		"FungibleToken": "0x9a0766d93b6608b7",
+		"StormMarketplace": "cadence\\contracts\\StormMarketplace.cdc",
+		"StormPack": "cadence\\contracts\\StormPack.cdc"
+	},
+	"networks": {
+		"emulator": "127.0.0.1:3569",
+		"mainnet": "access.mainnet.nodes.onflow.org:9000",
+		"testnet": "access.devnet.nodes.onflow.org:9000"
+	},
+	"accounts": {
+		"default": {
+			"address": "5494f9859870cf29",
+			"key": {
+				"type": "file",
+				"location": "stormy.pkey"
+			}
+		},
+		"emulator-account": {
+			"address": "f8d6e0586b0a20c7",
+			"key": "6d12eebfef9866c9b6fa92b97c6e705c26a1785b1e7944da701fc545a51d4673"
+		},
+		"kiranc": {
+			"address": "8ac65a1f5502f0d6",
+			"key": {
+				"type": "file",
+				"location": "kiranc.pkey"
+			}
+		},
+		"shazam8253": {
+			"address": "0009125382871fa4",
+			"key": {
+				"type": "file",
+				"location": "shazam8253.pkey"
+			}
+		},
+		"stormy": {
+			"address": "5494f9859870cf29",
+			"key": {
+				"type": "file",
+				"location": "stormy.pkey"
+			}
+		}
+	},
+	"deployments": {
+		"testnet": {
+			"default": [
+				"StormPack",
+				"StormMarketplace",
+				"ExampleNFT"
+			]
+		}
+	}
+}
