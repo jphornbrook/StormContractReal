@@ -23,11 +23,13 @@ transaction(acc: Address, selected: [UInt64], packs: UInt64) {
     execute{
         let x = 0
         while(x < packs){
-            <-StormPack.createPack(
+            groupsOfNFTs.append(<-StormPack.createPack(
                 ownerAddress: acc,
                 nfts: <- [],
                 id: x
-            )
+            ))
         }
+        
+
     }
 }
