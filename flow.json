@@ -12,10 +12,10 @@
 	},
 	"accounts": {
 		"default": {
-			"address": "5494f9859870cf29",
+			"address": "09fb63ef7226019e",
 			"key": {
 				"type": "file",
-				"location": "stormy.pkey"
+				"location": "stormibaby.pkey"
 			}
 		},
 		"emulator-account": {
@@ -34,6 +34,13 @@
 			"key": {
 				"type": "file",
 				"location": "shazam8253.pkey"
+			}
+		},
+		"stormibaby": {
+			"address": "09fb63ef7226019e",
+			"key": {
+				"type": "file",
+				"location": "stormibaby.pkey"
 			}
 		},
 		"stormy": {

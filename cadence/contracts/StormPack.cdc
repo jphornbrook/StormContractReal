@@ -2,7 +2,7 @@ import FungibleToken from 0x9a0766d93b6608b7
 import NonFungibleToken from 0x631e88ae7f1d7c20
 import FlowToken from 0x7e60df042a9c0868
 // import Flovatar from 0x9392a4a7c3f49a0b
-import ExampleNFT from 0x5494f9859870cf29
+import ExampleNFT from 0x09fb63ef7226019e
 
 import Crypto
 
@@ -63,10 +63,11 @@ pub contract StormPack {
             price: UFix64,
             count: UInt8,
             chances: {String : UInt8},
+            id: UInt64
         ) {
             // Increments the total supply counter
             StormPack.totalSupply = StormPack.totalSupply + UInt64(1)
-            self.id = StormPack.totalSupply
+            self.id = id
 
             // Moves all the components into the array
             self.nfts <- []
@@ -323,6 +324,7 @@ pub contract StormPack {
             price: price,
             count: count,           
             chances: chances,
+            id: id
         )
 
         // Emits an event to notify that a Pack was created.
