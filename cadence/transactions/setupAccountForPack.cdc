@@ -7,8 +7,7 @@ import FlowToken from 0x7e60df042a9c0868
 transaction() {
     prepare(account: AuthAccount) {
         if(account.getCapability<&{StormPack.CollectionPublic}>(StormPack.CollectionPublicPath) == nil) {
-            let wallet =  account.getCapability<&FlowToken.Vault{FungibleToken.Receiver}>(/public/flowTokenReceiver)
-            account.save<@StormPack.Collection>(<- StormPack.createEmptyCollection(ownerVault: wallet), to: StormPack.CollectionStoragePath)
+            account.save<@StormPack.Collection>(<- StormPack.createEmptyCollection(), to: StormPack.CollectionStoragePath)
             account.link<&{StormPack.CollectionPublic}>(StormPack.CollectionPublicPath, target: StormPack.CollectionStoragePath)
         }
     }
