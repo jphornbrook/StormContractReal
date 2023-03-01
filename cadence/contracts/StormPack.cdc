@@ -1,19 +1,18 @@
 import FungibleToken from 0x9a0766d93b6608b7
 import NonFungibleToken from 0x631e88ae7f1d7c20
 import FlowToken from 0x7e60df042a9c0868
-// import Flovatar from 0x9392a4a7c3f49a0b
-import ExampleNFT from 0x09fb63ef7226019e
+import ExampleNFT from 0x9edbe746c3cb021f
 
 import Crypto
 
 /*
- This contract defines the Flovatar Packs and a Collection to manage them.
- Each Pack will contain one item for each required Component (body, hair, eyes, nose, mouth, clothing),
- and two other Components that are optional (facial hair, accessory, hat, eyeglasses, background).
+ This contract defines the Storm Packs and a Collection to manage them.
+ Each Pack will contain one item for each required NFT (body, hair, eyes, nose, mouth, clothing),
+ and two other NFTs that are optional (facial hair, accessory, hat, eyeglasses, background).
  Packs will be pre-minted and can be purchased from the contract owner's account by providing a
  verified signature that is different for each Pack (more info in the purchase function).
  Once purchased, packs cannot be re-sold and users will only be able to open them to receive
- the contained Components into their collection.
+ the contained NFTs into their collection.
  */
 
 pub contract StormPack {
@@ -42,7 +41,7 @@ pub contract StormPack {
     }
 
     // The Pack resource that implements the Public interface and that contains
-    // different Components in a Dictionary
+    // different NFTs in a Dictionary
     pub resource Pack: Public {
         pub let id: UInt64
         pub let price: UFix64
@@ -54,7 +53,7 @@ pub contract StormPack {
 
 
 
-        // Initializes the Pack with all the Components.
+        // Initializes the Pack with all the NFTs.
         // It receives also the price and a random String that will signed by
         // the account owner to validate the purchase process.
         init(
@@ -69,7 +68,7 @@ pub contract StormPack {
             StormPack.totalSupply = StormPack.totalSupply + UInt64(1)
             self.id = id
 
-            // Moves all the components into the array
+            // Moves all the NFTs into the array
             self.nfts <- []
             while(nfts.length > 0){
                 self.nfts.append(<- nfts.remove(at: 0))
@@ -159,20 +158,20 @@ pub contract StormPack {
         }
 
         // This function allows any Pack owner to open the pack and receive its content
-        // into the owner's Component Collection.
-        // The pack is destroyed after the Components are delivered.
+        // into the owner's NFT Collection.
+        // The pack is destroyed after the NFTs are delivered.
         pub fun openPack(id: UInt64) {
 
-            // Gets the Component Collection Public capability to be able to
-            // send there the Components contained in the Pack
+            // Gets the NFT Collection Public capability to be able to
+            // send there the NFTs contained in the Pack
             let recipientCap = self.owner!.getCapability<&{ExampleNFT.ExampleNFTCollectionPublic}>(ExampleNFT.CollectionPublicPath)
             let recipient = recipientCap.borrow()!
 
             // Removed the pack from the collection
             let pack <- self.withdraw(withdrawID: id)
 
-            // Removes all the components from the Pack and deposits them to the
-            // Component Collection of the owner
+            // Removes all the NFTs from the Pack and deposits them to the
+            // NFT Collection of the owner
             while(pack.nfts.length > 0){
                 recipient.deposit(token: <- pack.removeNFT(at: 0))
             }
@@ -199,79 +198,79 @@ pub contract StormPack {
         // This will guarantee that the contract owner will be able to decide which user can buy a pack, by
         // providing them the correct signature.
         //
-        // pub fun purchase(tokenId: UInt64, recipientCap: Capability<&{StormPack.CollectionPublic}>, buyTokens: @FungibleToken.Vault) {
+        pub fun purchase(tokenId: UInt64, recipientCap: Capability<&{StormPack.CollectionPublic}>, buyTokens: @FungibleToken.Vault) {
 
-        //     // Checks that the pack is still available and that the FLOW tokens are sufficient
-        //     pre {
-        //         self.ownedPacks.containsKey(tokenId) == true : "Pack not found!"
-        //         self.getPrice(id: tokenId) <= buyTokens.balance : "Not enough tokens to buy the Pack!"
-        //         buyTokens.isInstance(Type<@FlowToken.Vault>()) : "Vault not of the right Token Type"
-        //     }
+            // Checks that the pack is still available and that the FLOW tokens are sufficient
+            pre {
+                self.ownedPacks.containsKey(tokenId) == true : "Pack not found!"
+                self.getPrice(id: tokenId) <= buyTokens.balance : "Not enough tokens to buy the Pack!"
+                buyTokens.isInstance(Type<@FlowToken.Vault>()) : "Vault not of the right Token Type"
+            }
 
-        //     // Gets the Crypto.KeyList and the public key of the collection's owner
-        //     let keyList = Crypto.KeyList()
-        //     let accountKey = self.owner!.keys.get(keyIndex: 0)!.publicKey
-
-
-        //     // Borrows the recipient's capability and withdraws the Pack from the collection.
-        //     // If this fails the transaction will revert but the signature will be exposed.
-        //     // For this reason in case it happens, the randomString will be reset when the purchase
-        //     // reservation timeout expires by the web server back-end.
-        //     let recipient = recipientCap.borrow()!
-        //     let pack <- self.withdraw(withdrawID: tokenId)
-        //     let seller = pack.ownerAddress
-        //     let recieverCap = getAccount(seller).getCapability<&{FungibleToken.Receiver}>(/public/flowUtilityTokenReceiver)
-
-        //     // Borrows the owner's capability for the Vault and deposits the FLOW tokens
-        //     let vaultRef = recieverCap.borrow() ?? panic("Could not borrow reference to owner pack vault")
-        //     vaultRef.deposit(from: <-buyTokens)
+            // Gets the Crypto.KeyList and the public key of the collection's owner
+            let keyList = Crypto.KeyList()
+            let accountKey = self.owner!.keys.get(keyIndex: 0)!.publicKey
 
 
-        //     // Resets the randomString so that the provided signature will become useless
-        //     let packId: UInt64 = pack.id
-        //     // Deposits the Pack to the recipient's collection
-        //     recipient.deposit(token: <- pack)
+            // Borrows the recipient's capability and withdraws the Pack from the collection.
+            // If this fails the transaction will revert but the signature will be exposed.
+            // For this reason in case it happens, the randomString will be reset when the purchase
+            // reservation timeout expires by the web server back-end.
+            let recipient = recipientCap.borrow()!
+            let pack <- self.withdraw(withdrawID: tokenId)
+            let seller = pack.ownerAddress
+            let recieverCap = getAccount(seller).getCapability<&{FungibleToken.Receiver}>(/public/flowUtilityTokenReceiver)
 
-        //     // Emits an even to notify about the purchase
-        //     emit Purchased(id: packId)
-
-        // }
-        // //
-        // pub fun purchaseDapper(tokenId: UInt64, recipientCap: Capability<&{StormPack.CollectionPublic}>, buyTokens: @FungibleToken.Vault, expectedPrice: UFix64) {
-
-        //     // Checks that the pack is still available and that the FLOW tokens are sufficient
-        //     pre {
-        //         self.ownedPacks.containsKey(tokenId) == true : "Pack not found!"
-        //         self.getPrice(id: tokenId) <= buyTokens.balance : "Not enough tokens to buy the Pack!"
-        //         self.getPrice(id: tokenId) == expectedPrice : "Price not set as expected!"
-        //         buyTokens.isInstance(Type<@FlowToken.Vault>()) : "Vault not of the right Token Type"
-        //     }
+            // Borrows the owner's capability for the Vault and deposits the FLOW tokens
+            let vaultRef = recieverCap.borrow() ?? panic("Could not borrow reference to owner pack vault")
+            vaultRef.deposit(from: <-buyTokens)
 
 
+            // Resets the randomString so that the provided signature will become useless
+            let packId: UInt64 = pack.id
+            // Deposits the Pack to the recipient's collection
+            recipient.deposit(token: <- pack)
 
-        //     // Borrows the recipient's capability and withdraws the Pack from the collection.
-        //     // If this fails the transaction will revert but the signature will be exposed.
-        //     // For this reason in case it happens, the randomString will be reset when the purchase
-        //     // reservation timeout expires by the web server back-end.
-        //     let recipient = recipientCap.borrow()!
-        //     let pack <- self.withdraw(withdrawID: tokenId)
-        //     let seller = pack.ownerAddress
+            // Emits an even to notify about the purchase
+            emit Purchased(id: packId)
 
-        //     // Borrows the owner's capability for the Vault and deposits the FLOW tokens
-        //     let dapperMarketVault = getAccount(seller).getCapability<&{FungibleToken.Receiver}>(/public/flowUtilityTokenReceiver)
-        //     let vaultRef = dapperMarketVault.borrow() ?? panic("Could not borrow reference to owner pack vault")
-        //     vaultRef.deposit(from: <-buyTokens)
+        }
+        //
+        pub fun purchaseDapper(tokenId: UInt64, recipientCap: Capability<&{StormPack.CollectionPublic}>, buyTokens: @FungibleToken.Vault, expectedPrice: UFix64) {
+
+            // Checks that the pack is still available and that the FLOW tokens are sufficient
+            pre {
+                self.ownedPacks.containsKey(tokenId) == true : "Pack not found!"
+                self.getPrice(id: tokenId) <= buyTokens.balance : "Not enough tokens to buy the Pack!"
+                self.getPrice(id: tokenId) == expectedPrice : "Price not set as expected!"
+                buyTokens.isInstance(Type<@FlowToken.Vault>()) : "Vault not of the right Token Type"
+            }
 
 
-        //     // Resets the randomString so that the provided signature will become useless
-        //     let packId: UInt64 = pack.id
 
-        //     // Deposits the Pack to the recipient's collection
-        //     recipient.deposit(token: <- pack)
+            // Borrows the recipient's capability and withdraws the Pack from the collection.
+            // If this fails the transaction will revert but the signature will be exposed.
+            // For this reason in case it happens, the randomString will be reset when the purchase
+            // reservation timeout expires by the web server back-end.
+            let recipient = recipientCap.borrow()!
+            let pack <- self.withdraw(withdrawID: tokenId)
+            let seller = pack.ownerAddress
 
-        //     // Emits an even to notify about the purchase
-        //     emit Purchased(id: packId)
-        // }
+            // Borrows the owner's capability for the Vault and deposits the FLOW tokens
+            let dapperMarketVault = getAccount(seller).getCapability<&{FungibleToken.Receiver}>(/public/flowUtilityTokenReceiver)
+            let vaultRef = dapperMarketVault.borrow() ?? panic("Could not borrow reference to owner pack vault")
+            vaultRef.deposit(from: <-buyTokens)
+
+
+            // Resets the randomString so that the provided signature will become useless
+            let packId: UInt64 = pack.id
+
+            // Deposits the Pack to the recipient's collection
+            recipient.deposit(token: <- pack)
+
+            // Emits an even to notify about the purchase
+            emit Purchased(id: packId)
+        }
 
         destroy() {
             destroy self.ownedPacks
@@ -306,9 +305,9 @@ pub contract StormPack {
     // }
 
 
-    // This method can only be called from another contract in the same account (The Flovatar Admin resource)
-    // It creates a new pack from a list of Components, the random String and the price.
-    // Some Components are required and others are optional
+    // This method can only be called from another contract in the same account (The Storm Admin resource)
+    // It creates a new pack from a list of NFTs, the random String and the price.
+    // Some NFTs are required and others are optional
     pub fun createPack(
             ownerAddress: Address,
             nfts: @[ExampleNFT.NFT],
@@ -342,8 +341,8 @@ pub contract StormPack {
         // Initialize the total supply
         self.totalSupply = 0
 
-        self.account.save<@StormPack.Collection>(<- StormPack.createEmptyCollection(), to: StormPack.CollectionStoragePath)
-        self.account.link<&{StormPack.CollectionPublic}>(StormPack.CollectionPublicPath, target: StormPack.CollectionStoragePath)
+        self.account.save<@StormPack.Collection>(<- StormPack.createEmptyCollection(), to: self.CollectionStoragePath)
+        self.account.link<&{StormPack.CollectionPublic}>(StormPack.CollectionPublicPath, target: self.CollectionStoragePath)
 
         emit ContractInitialized()
 	}

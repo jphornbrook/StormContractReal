@@ -1,4 +1,6 @@
-import StormPack from ../contracts/StormPack.cdc
+import StormPack from 0x09fb63ef7226019e
+import StormMarketplace from 0x09fb63ef7226019e
+
 
 transaction(tokenID: UInt64, recAddress: Address, amount: UFix64) {
     let vaultCap: Capability<&FlowToken.Vault{FungibleToken.Receiver}>
@@ -27,7 +29,7 @@ transaction(tokenID: UInt64, recAddress: Address, amount: UFix64) {
 
     execute {
         let seller = getAccount(saleAddress)
-        let allPackscap = seller.getCapability(StormPack.CollectionPublicPath).borrow<&{StormPack.CollectionPublic}>() ?? panic("Could not borrow seller's sale reference")
-        allPackscap.purchase(tokenId: tokenId, recipientCap: self.collectionCap, buyTokens: <- self.temporaryVault)
+        let allPackscap = seller.getCapability(StormMarketplace.CollectionPublicPath).borrow<&{StormMarketplace.CollectionPublic}>() ?? panic("Could not borrow seller's sale reference")
+        allPackscap.purchasePack(tokenId: tokenId, recipientCap: self.collectionCap, buyTokens: <- self.temporaryVault)
     }
 }

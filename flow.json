@@ -12,10 +12,10 @@
 	},
 	"accounts": {
 		"default": {
-			"address": "09fb63ef7226019e",
+			"address": "9edbe746c3cb021f",
 			"key": {
 				"type": "file",
-				"location": "stormibaby.pkey"
+				"location": "trey.pkey"
 			}
 		},
 		"emulator-account": {
@@ -48,6 +48,13 @@
 			"key": {
 				"type": "file",
 				"location": "stormy.pkey"
+			}
+		},
+		"trey": {
+			"address": "9edbe746c3cb021f",
+			"key": {
+				"type": "file",
+				"location": "trey.pkey"
 			}
 		}
 	},

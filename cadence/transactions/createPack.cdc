@@ -14,6 +14,7 @@ transaction(acc: Address, selected: [UInt64], packs: UInt64) {
     prepare(account: AuthAccount){
         self.groupsOfNFTs <- []
         self.exampleNFTCollection = account.borrow<&ExampleNFT.Collection>(from: ExampleNFT.CollectionStoragePath)!
+        
         self.stormPackCollection = account.borrow<&StormPack.Collection>(from: StormPack.CollectionStoragePath)!
         self.allNFTs <- []
         for nftID in selected {

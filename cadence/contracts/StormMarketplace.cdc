@@ -1,7 +1,7 @@
 import FungibleToken from 0x9a0766d93b6608b7
 import NonFungibleToken from 0x631e88ae7f1d7c20
 import FlowToken from 0x7e60df042a9c0868
-import StormPack from 0x09fb63ef7226019e
+import StormPack from 0x9edbe746c3cb021f
 
 
 pub contract StormMarketplace {
@@ -59,7 +59,7 @@ pub contract StormMarketplace {
             self.packPrices = {}
         }
 
-        // Lists a Flovatar NFT for sale in this collection
+        // Lists a Pack NFT for sale in this collection
         pub fun listPackForSale(token: @StormPack.Pack, price: UFix64) {
             let id = token.id
             let seller = token.ownerAddress
@@ -82,7 +82,7 @@ pub contract StormMarketplace {
             emit PackForSale(id: id, price: price)
         }
 
-        // Changes the price of a Flovatar that is currently for sale
+        // Changes the price of a Pack that is currently for sale
         pub fun changePackPrice(tokenId: UInt64, newPrice: UFix64) {
             self.packPrices[tokenId] = newPrice
 
@@ -90,7 +90,7 @@ pub contract StormMarketplace {
             emit PackPriceChanged(id: tokenId, newPrice: newPrice)
         }
 
-        // Lets a user send tokens to purchase a Flovatar that is for sale
+        // Lets a user send tokens to purchase a Pack that is for sale
         pub fun purchasePack(tokenId: UInt64, recipientCap: Capability<&{StormPack.CollectionPublic}>, buyTokens: @FungibleToken.Vault) {
             pre {
                 self.packForSale[tokenId] != nil && self.packPrices[tokenId] != nil:
@@ -130,7 +130,7 @@ pub contract StormMarketplace {
             emit PackPurchased(id: tokenId, price: price, from: vaultRef.owner!.address, to: recipient.owner!.address)
         }
 
-        // Returns the price of a specific Flovatar in the sale
+        // Returns the price of a specific Pack in the sale
         pub fun getPackPrice(tokenId: UInt64): UFix64? {
             return self.packPrices[tokenId]
         }
@@ -148,12 +148,12 @@ pub contract StormMarketplace {
             return <-token
         }
 
-        // Returns an array of Flovatar IDs that are for sale
+        // Returns an array of Pack IDs that are for sale
         pub fun getPackIDs(): [UInt64] {
             return self.packForSale.keys
         }
 
-        // Returns a borrowed reference to a Flovatar Sale
+        // Returns a borrowed reference to a Pack Sale
         // so that the caller can read data and call methods from it.
         pub fun getPack(tokenId: UInt64): &{StormPack.Public}? {
             if self.packForSale[tokenId] != nil {
@@ -164,7 +164,7 @@ pub contract StormMarketplace {
             }
         }
 
-        // Returns a borrowed reference to a Flovatar Sale
+        // Returns a borrowed reference to a Pack Sale
         // so that the caller can read data and call methods from it.
         pub fun getPackByAuthor(author: Address): [UInt64]? {
             if self.authorPacks[author] != nil {
@@ -180,7 +180,7 @@ pub contract StormMarketplace {
     }
 
 
-    // This struct is used to send a data representation of the Flovatar Sales
+    // This struct is used to send a data representation of the Pack Sales
     // when retrieved using the contract helper methods outside the collection.
     pub struct PackSaleData {
         pub let id: UInt64
@@ -201,7 +201,7 @@ pub contract StormMarketplace {
         }
     }
 
-    // Get all the Flovatar Sale offers for a specific account
+    // Get all the Pack Sale offers for a specific account
     pub fun getPackSales(address: Address) : [PackSaleData] {
         var saleData: [PackSaleData] = []
         let account = getAccount(address)
@@ -236,7 +236,7 @@ pub contract StormMarketplace {
     }
 
     
-    // Get a specific Flovatar Sale offers for an account
+    // Get a specific Pack Sale offers for an account
     pub fun getPackSale(address: Address, id: UInt64) : PackSaleData? {
         let account = getAccount(address)
 

@@ -5,11 +5,22 @@ import FlowToken from 0x7e60df042a9c0868
 
 
 transaction() {
-    prepare(account: AuthAccount) {
-        if(account.getCapability<&{StormPack.CollectionPublic}>(StormPack.CollectionPublicPath) == nil) {
-            account.save<@StormPack.Collection>(<- StormPack.createEmptyCollection(), to: StormPack.CollectionStoragePath)
-            account.link<&{StormPack.CollectionPublic}>(StormPack.CollectionPublicPath, target: StormPack.CollectionStoragePath)
+    prepare(signer: AuthAccount) {
+        if signer.borrow<&StormPack.Collection>(from: StormPack.CollectionStoragePath) != nil {
+            return
         }
+
+        // Create a new empty collection
+        let collection <- StormPack.createEmptyCollection()
+
+        // save it to the account
+        signer.save(<-collection, to: StormPack.CollectionStoragePath)
+
+        // create a public capability for the collection
+        signer.link<&{StormPack.CollectionPublic}>(
+            StormPack.CollectionPublicPath,
+            target: StormPack.CollectionStoragePath
+        )
     }
 
 }

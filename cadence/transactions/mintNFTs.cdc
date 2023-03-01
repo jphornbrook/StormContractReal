@@ -1,5 +1,5 @@
 import NonFungibleToken from 0x631e88ae7f1d7c20
-import ExampleNFT from 0x09fb63ef7226019e
+import ExampleNFT from 0x9edbe746c3cb021f
 import MetadataViews from 0x631e88ae7f1d7c20
 import FungibleToken from 0x9a0766d93b6608b7
 
